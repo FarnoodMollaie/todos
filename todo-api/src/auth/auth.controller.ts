@@ -1,19 +1,28 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import type { Request, Response } from 'express';
 import { setAuthCookies } from './utils/auth-cookies.js';
+import { CurrentUser } from './decorators/current-user.decorator.js';
+import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async me(@CurrentUser('sub') userId: string) {
+    return this.authService.getMe(userId);
+  }
   @Post('register')
   register(@Body() body: { email: string; password: string }) {
     return this.authService.register(body);

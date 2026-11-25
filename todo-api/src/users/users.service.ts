@@ -43,6 +43,9 @@ export class UsersService {
     );
   }
   findById(id: string) {
-    return this.userModel.findById(id).exec();
+    return this.userModel
+      .findById(id)
+      .select('_id email createdAt updatedAt')
+      .exec();
   }
 }

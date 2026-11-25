@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Layers3 } from "lucide-react";
 import { useLogin } from "./api/useLogin";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { route } from "../../../components/routes/route";
 
 const LoginPage = () => {
-  const { login, isLoggedIn } = useLogin();
+  const { login } = useLogin();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +21,9 @@ const LoginPage = () => {
       {
         onSuccess: (result) => {
           if (result.isSuccess) {
-            (setEmail(""), setPassword(""));
+            navigate(route.dashboardPath, { replace: true });
+            setEmail("");
+            setPassword("");
           }
         },
       },

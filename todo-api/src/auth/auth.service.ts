@@ -109,4 +109,15 @@ export class AuthService {
 
     return tokens;
   }
+  async getMe(userId: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User no longer exists');
+    }
+
+    return {
+      id: user._id.toString(),
+      email: user.email,
+    };
+  }
 }
