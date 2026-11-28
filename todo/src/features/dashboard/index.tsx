@@ -14,6 +14,7 @@ import TodoList from "../tasks/components/TodoList";
 import Modal from "../../shared/ui/modal";
 import TodoCreateUpdateForm from "../tasks/components/TodoCreateUpdateForm";
 import type { ITaskData } from "../tasks/types/todo.types";
+import LogoutModal from "../auth/logout";
 
 type Todo = {
   id: string;
@@ -60,6 +61,7 @@ const mockTodos: Todo[] = [
 const Dashboard = () => {
   const { userProfile, isGettingProfile } = useGetUserProfile();
 
+  const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [selectedTask, setSelectedTask] = useState<ITaskData | null>(null);
   const [todos, setTodos] = useState<Todo[]>(mockTodos);
@@ -189,7 +191,11 @@ const Dashboard = () => {
                   </p>
                   <p className="truncate text-xs text-slate-400">{email}</p>
                 </div>
-                <LogOut size={17} className="text-slate-400" />
+                <LogOut
+                  size={17}
+                  className="text-slate-400 cursor-pointer"
+                  onClick={() => setOpenLogoutModal(true)}
+                />
               </div>
             </div>
           </div>
@@ -332,6 +338,10 @@ const Dashboard = () => {
           setSelectedTask={setSelectedTask}
         />
       </Modal>
+      <LogoutModal
+        modalOpen={openLogoutModal}
+        setModalOpen={setOpenLogoutModal}
+      />
     </>
   );
 };

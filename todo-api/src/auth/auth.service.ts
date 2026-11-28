@@ -120,4 +120,26 @@ export class AuthService {
       email: user.email,
     };
   }
+  async logout(refreshToken?: string) {
+    if (!refreshToken) return;
+
+    let payload: { sub: string; type: string };
+
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+      });
+    } catch {
+      return;
+    }
+
+    if (payload.type !== 'refresh' || typeof payload.sub !== 'string') {
+      return;
+    }
+
+    await this.usersService.revokeRefreshTokenHash(
+      payload.sub,
+      hashToken(refreshToken),
+    );
+  }
 }

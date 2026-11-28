@@ -25,3 +25,13 @@ export function setAuthCookies(
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 }
+
+export function clearAuthCookies(response: Response) {
+  response.clearCookie('access_token', {
+    path: '/',
+  });
+
+  response.clearCookie('refresh_token', {
+    path: '/auth',
+  });
+}

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import type { Request, Response } from 'express';
-import { setAuthCookies } from './utils/auth-cookies.js';
+import { clearAuthCookies, setAuthCookies } from './utils/auth-cookies.js';
 import { CurrentUser } from './decorators/current-user.decorator.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 
@@ -57,5 +57,19 @@ export class AuthController {
     setAuthCookies(response, tokens);
     // 5. Return success message
     return { message: 'Tokens refreshed successfully' };
+  }
+  @Post('logout')
+  @HttpCode(200)
+  async logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = request.cookies?.refresh_token;
+
+    await this.authService.logout(refreshToken);
+
+    clearAuthCookies(response);
+
+    return { message: 'Logout successful' };
   }
 }

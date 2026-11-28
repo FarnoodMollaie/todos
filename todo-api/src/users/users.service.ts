@@ -48,4 +48,15 @@ export class UsersService {
       .select('_id email createdAt updatedAt')
       .exec();
   }
+  async revokeRefreshTokenHash(userId: string, tokenHash: string) {
+    return this.userModel.findOneAndUpdate(
+      {
+        _id: userId,
+        refreshTokenHash: tokenHash,
+      },
+      {
+        $set: { refreshTokenHash: null },
+      },
+    );
+  }
 }
