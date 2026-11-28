@@ -25,6 +25,10 @@ export class TodosController {
   findAll(@CurrentUser('sub') userId: string, @Query() filters: FilterTodoDto) {
     return this.todosService.findAll(userId, filters);
   }
+  @Get('status')
+  status(@CurrentUser('sub') userId: string) {
+    return this.todosService.status(userId);
+  }
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser('sub') userId: string) {
     return this.todosService.findOne(id, userId);

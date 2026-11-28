@@ -8,4 +8,5 @@ export const endpoints = {
   getTasksList: "/todos",
   createTask: "/todos",
   updateTask: (id: string) => `/todos/${id}`,
+  tasksStatus: "/todos/status",
 };

@@ -15,9 +15,8 @@ import Modal from "../../shared/ui/modal";
 import TodoCreateUpdateForm from "../tasks/components/TodoCreateUpdateForm";
 import type { ITaskData } from "../tasks/types/todo.types";
 import { useGetTasksList } from "../tasks/api/useGetTasksList";
-import { Link } from "react-router";
-import { route } from "../../components/routes/route";
 import PanelPageHeader from "../../shared/ui/panelPageHeader";
+import { useGetTasksStatus } from "../../shared/api/useGetTasksStatus";
 
 type Todo = {
   id: string;
@@ -26,58 +25,19 @@ type Todo = {
   createdAt: string;
 };
 
-type Filter = "all" | "active" | "completed";
-
-const mockTodos: Todo[] = [
-  {
-    id: "1",
-    title: "Complete NestJS authentication",
-    completed: true,
-    createdAt: "2026-11-21",
-  },
-  {
-    id: "2",
-    title: "Implement refresh token rotation",
-    completed: true,
-    createdAt: "2026-11-22",
-  },
-  {
-    id: "3",
-    title: "Build Todo dashboard UI",
-    completed: false,
-    createdAt: "2026-11-24",
-  },
-  {
-    id: "4",
-    title: "Connect React with NestJS API",
-    completed: false,
-    createdAt: "2026-11-24",
-  },
-  {
-    id: "5",
-    title: "Write API integration tests",
-    completed: false,
-    createdAt: "2026-11-23",
-  },
-];
-
 const Dashboard = () => {
-  const { userProfile, isGettingProfile } = useGetUserProfile();
+  const { isGettingProfile } = useGetUserProfile();
   const { tasksList } = useGetTasksList();
+  const { tasksStatus } = useGetTasksStatus();
+  console.log("🚀 ~ Dashboard ~ tasksStatus:", tasksStatus);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [selectedTask, setSelectedTask] = useState<ITaskData | null>(null);
-  const [todos, setTodos] = useState<Todo[]>(mockTodos);
   const [openCreateUpdateModal, setOpenCreateUpdateModal] =
     useState<boolean>(false);
 
-  const completed = todos.filter((todo) => todo.completed).length;
-  const active = todos.length - completed;
-  const progress = todos.length
-    ? Math.round((completed / todos.length) * 100)
+  const progress = tasksList?.length!
+    ? Math.round((tasksStatus?.completedTodos! / tasksList?.length!) * 100)
     : 0;
-
-  const email = userProfile?.email ?? "User";
-  const username = email.split("@")[0];
 
   if (isGettingProfile) {
     return (
@@ -102,19 +62,19 @@ const Dashboard = () => {
           {[
             {
               label: "Total Tasks",
-              value: todos.length,
+              value: tasksStatus?.allTasks,
               icon: ListTodo,
               color: "bg-indigo-50 text-indigo-600",
             },
             {
               label: "In Progress",
-              value: active,
+              value: tasksStatus?.activeTodos,
               icon: Clock3,
               color: "bg-amber-50 text-amber-600",
             },
             {
               label: "Completed",
-              value: completed,
+              value: tasksStatus?.completedTodos,
               icon: CheckCircle2,
               color: "bg-emerald-50 text-emerald-600",
             },
@@ -151,7 +111,8 @@ const Dashboard = () => {
                 Your productivity overview
               </h2>
               <p className="mt-2 text-sm text-indigo-100">
-                You've completed {completed} out of {todos.length} tasks.
+                You've completed {tasksStatus?.completedTodos} out of{" "}
+                {tasksStatus?.allTasks} tasks.
               </p>
             </div>
             <span className="text-4xl font-bold">{progress}%</span>

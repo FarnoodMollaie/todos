@@ -73,4 +73,23 @@ export class TodosService {
 
     return { message: 'Todo deleted successfully' };
   }
+  async status(userId: string) {
+    const [allTasks, activeTodos, completedTodos] = await Promise.all([
+      this.todoModel.countDocuments({ user: userId }),
+      this.todoModel.countDocuments({
+        user: userId,
+        completed: false,
+      }),
+      this.todoModel.countDocuments({
+        user: userId,
+        completed: true,
+      }),
+    ]);
+
+    return {
+      allTasks,
+      activeTodos,
+      completedTodos,
+    };
+  }
 }
