@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -14,14 +15,15 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { CreateToDo } from './dtos/create-todo.dto.js';
 import { UpdateToDo } from './dtos/update-todo.dto.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { FilterTodoDto } from './dtos/filter-todo.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
   @Get()
-  findAll(@CurrentUser('sub') userId: string) {
-    return this.todosService.findAll(userId);
+  findAll(@CurrentUser('sub') userId: string, @Query() filters: FilterTodoDto) {
+    return this.todosService.findAll(userId, filters);
   }
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser('sub') userId: string) {

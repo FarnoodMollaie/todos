@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Todo } from './schemas/todo.schema.js';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import type { QueryFilter } from 'mongoose';
 import { CreateToDo } from './dtos/create-todo.dto.js';
+import { FilterTodoDto, TodoStatus } from './dtos/filter-todo.dto.js';
 
 @Injectable()
 export class TodosService {
@@ -10,8 +12,20 @@ export class TodosService {
     @InjectModel(Todo.name)
     private readonly todoModel: Model<Todo>,
   ) {}
-  async findAll(userId: string) {
-    return await this.todoModel.find({ user: userId }).exec();
+  async findAll(userId: string, filters: FilterTodoDto) {
+    const query: QueryFilter<Todo> = {
+      user: new Types.ObjectId(userId),
+    };
+
+    if (filters.status === TodoStatus.COMPLETED) {
+      query.completed = true;
+    }
+
+    if (filters.status === TodoStatus.ACTIVE) {
+      query.completed = false;
+    }
+
+    return this.todoModel.find(query).exec();
   }
   async findOne(id: string, userId: string) {
     const foundTodo = await this.todoModel

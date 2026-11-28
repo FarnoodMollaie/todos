@@ -6,7 +6,6 @@ import {
   Pen,
   Trash2,
 } from "lucide-react";
-import { useGetTasksList } from "../api/useGetTasksList";
 import { useDeleteTask } from "../api/useDeleteTask";
 import { useUpdateTask } from "../api/useUpdateTask";
 import type { ITaskData } from "../types/todo.types";
@@ -15,19 +14,19 @@ const TodoList = ({
   setIsEditMode,
   setOpenCreateUpdateModal,
   setSelectedTask,
+  tasksList
 }: {
   setIsEditMode: (data: boolean) => void;
   setOpenCreateUpdateModal: (data: boolean) => void;
   setSelectedTask: React.Dispatch<React.SetStateAction<ITaskData | null>>;
+  tasksList:ITaskData[]
 }) => {
-  const { tasksList } = useGetTasksList();
   const { deleteTask } = useDeleteTask();
   const { updateTask } = useUpdateTask();
-  console.log("🚀 ~ TodoList ~ tasksList:", tasksList);
 
   return (
     <div className="divide-y divide-slate-100">
-      {tasksList?.data?.length === 0 ? (
+      {tasksList?.length === 0 ? (
         <div className="flex flex-col items-center py-16 text-center">
           <div className="mb-4 rounded-2xl bg-slate-100 p-5">
             <ListTodo size={30} className="text-slate-400" />
@@ -38,7 +37,7 @@ const TodoList = ({
           </p>
         </div>
       ) : (
-        tasksList?.data?.map((todo) => (
+        tasksList?.map((todo) => (
           <div
             key={todo._id}
             className="group flex items-center gap-4 px-6 py-5 transition hover:bg-slate-50"

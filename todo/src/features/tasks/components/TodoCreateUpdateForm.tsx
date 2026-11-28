@@ -129,7 +129,7 @@ const TodoCreateUpdateForm = ({
           ) : (
             <>
               <Plus size={17} />
-              {isCreatingTask ? "Create Task" : "Update Task"}
+              {!isEditMode ? "Create Task" : "Update Task"}
             </>
           )}
         </button>
